@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trips-deployment
+  namespace: default
+  labels:
+    deploy: trips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trips
+  template:
+    metadata:
+      labels:
+        app: trips
+    spec:
+      containers:
+      - image: "registryczp7206.azurecr.io/tripinsights/trips:1.0"
+        imagePullPolicy: Always
+        name: trips
+        ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          - containerPort: 443
+            name: https
+            protocol: TCP
+        env:
+          - name: PORT
+            value: '80'
+
+          - name: OPENAPI_DOCS_URI
+            valueFrom:
+              configMapKeyRef:
+                name: oh-configs
+                key: OPENAPI_DOCS_URI
+
+          - name: DEBUG_LOGGING
+            value: 'true'   
+
+          - name: SQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: oh-secret
+                key: SQL_PASSWORD
+
+          - name: SQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: oh-configs
+                key: SQL_USER
+
+          - name: SQL_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: oh-configs
+                key: SQL_SERVER
+
+          - name: SQL_DBNAME
+            valueFrom:
+              configMapKeyRef:
+                name: oh-configs
+                key: SQL_DB
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripsapi-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: trips
+  ports:
+    - protocol: TCP
+      name: trips-http
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      name: trips-https
+      port: 443
+      targetPort: 443
+
+---
