@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: userprofile-deployment
+ labels:
+  app: userprofile
+spec:
+  replicas: 1
+  selector:
+   matchLabels:
+    app: userprofile
+  template:
+   metadata:
+    labels:
+     app: userprofile
+   spec:
+    containers:
+    - name: userprofile
+      image: registryczp7206.azurecr.io/tripinsights/userprofile:1.0
+      ports:
+       - containerPort: 80
+      env:
+       - name: SQL_PASSWORD
+         valueFrom:
+          secretKeyRef:
+           name: oh-secret
+           key: SQL_PASSWORD
+       - name: SQL_USER
+         valueFrom:
+          configMapKeyRef:
+           name: oh-configs
+           key: SQL_USER
+       - name: SQL_SERVER
+         valueFrom:
+          configMapKeyRef:
+           name: oh-configs
+           key: SQL_SERVER
+       - name: SQL_DBNAME
+         valueFrom:
+          configMapKeyRef:
+           name: oh-configs
+           key: SQL_DB
