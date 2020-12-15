@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  OPENAPI_DOCS_URI: http://52.179.119.167
+  SQL_DB: mydrivingDB
+  SQL_SERVER: sqlserverczp7206.database.windows.net
+  SQL_USER: sqladmincZp7206
+  TRIPS_API_ENDPOINT: http://tripsapi-service
+  USERPROFILE_API_ENDPOINT: http://userprofile-service
+kind: ConfigMap
+metadata:
+  name: oh-configs
+  namespace: default
+
+
