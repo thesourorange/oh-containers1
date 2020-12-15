@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tripview-deployment
+  labels:
+    app: tripview
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: tripview
+  template:
+    metadata:
+      labels:
+        app: tripview
+    spec:
+      containers:
+      - name: tripview
+        image: registryczp7206.azurecr.io/tripinsights/tripviewer:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: TRIPS_API_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: oh-configs
+              key: "TRIPS_API_ENDPOINT"
+        - name: USERPROFILE_API_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: oh-configs
+              key: "USERPROFILE_API_ENDPOINT"
